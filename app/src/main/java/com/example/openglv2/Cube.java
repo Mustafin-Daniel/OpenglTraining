@@ -19,54 +19,52 @@ public class Cube {
     private int mProgram;
 
     public Cube(float cx, float cy, float cz, float len){
-        float c[] = {
+        coords = new float[]{
                 // In the YZ plane
-                cx+len/2, cy+len/2, cz+len/2,
-                cx+len/2, cy-len/2, cz+len/2,
-                cx+len/2, cy-len/2, cz-len/2,
-                cx+len/2, cy+len/2, cz+len/2,
-                cx+len/2, cy+len/2, cz-len/2,
-                cx+len/2, cy-len/2, cz-len/2,
+                cx + len / 2, cy + len / 2, cz + len / 2,
+                cx + len / 2, cy - len / 2, cz + len / 2,
+                cx + len / 2, cy - len / 2, cz - len / 2,
+                cx + len / 2, cy + len / 2, cz + len / 2,
+                cx + len / 2, cy + len / 2, cz - len / 2,
+                cx + len / 2, cy - len / 2, cz - len / 2,
                 // In the XY plane
-                cx+len/2, cy+len/2, cz+len/2,
-                cx+len/2, cy-len/2, cz+len/2,
-                cx-len/2, cy-len/2, cz+len/2,
-                cx+len/2, cy+len/2, cz+len/2,
-                cx-len/2, cy+len/2, cz+len/2,
-                cx-len/2, cy-len/2, cz+len/2,
+                cx + len / 2, cy + len / 2, cz + len / 2,
+                cx + len / 2, cy - len / 2, cz + len / 2,
+                cx - len / 2, cy - len / 2, cz + len / 2,
+                cx + len / 2, cy + len / 2, cz + len / 2,
+                cx - len / 2, cy + len / 2, cz + len / 2,
+                cx - len / 2, cy - len / 2, cz + len / 2,
                 // In the XZ plane
-                cx+len/2, cy+len/2, cz+len/2,
-                cx-len/2, cy+len/2, cz+len/2,
-                cx-len/2, cy+len/2, cz-len/2,
-                cx+len/2, cy+len/2, cz+len/2,
-                cx+len/2, cy+len/2, cz-len/2,
-                cx-len/2, cy+len/2, cz-len/2,
+                cx + len / 2, cy + len / 2, cz + len / 2,
+                cx - len / 2, cy + len / 2, cz + len / 2,
+                cx - len / 2, cy + len / 2, cz - len / 2,
+                cx + len / 2, cy + len / 2, cz + len / 2,
+                cx + len / 2, cy + len / 2, cz - len / 2,
+                cx - len / 2, cy + len / 2, cz - len / 2,
                 // In the YZ plane (this time x is -)
-                cx-len/2, cy+len/2, cz+len/2,
-                cx-len/2, cy-len/2, cz+len/2,
-                cx-len/2, cy-len/2, cz-len/2,
-                cx-len/2, cy+len/2, cz+len/2,
-                cx-len/2, cy+len/2, cz-len/2,
-                cx-len/2, cy-len/2, cz-len/2,
+                cx - len / 2, cy + len / 2, cz + len / 2,
+                cx - len / 2, cy - len / 2, cz + len / 2,
+                cx - len / 2, cy - len / 2, cz - len / 2,
+                cx - len / 2, cy + len / 2, cz + len / 2,
+                cx - len / 2, cy + len / 2, cz - len / 2,
+                cx - len / 2, cy - len / 2, cz - len / 2,
                 // In the XY plane (this time z is -)
-                cx+len/2, cy+len/2, cz-len/2,
-                cx+len/2, cy-len/2, cz-len/2,
-                cx-len/2, cy-len/2, cz-len/2,
-                cx+len/2, cy+len/2, cz-len/2,
-                cx-len/2, cy+len/2, cz-len/2,
-                cx-len/2, cy-len/2, cz-len/2,
+                cx + len / 2, cy + len / 2, cz - len / 2,
+                cx + len / 2, cy - len / 2, cz - len / 2,
+                cx - len / 2, cy - len / 2, cz - len / 2,
+                cx + len / 2, cy + len / 2, cz - len / 2,
+                cx - len / 2, cy + len / 2, cz - len / 2,
+                cx - len / 2, cy - len / 2, cz - len / 2,
                 // In the XZ plane (this time y is -)
-                cx+len/2, cy-len/2, cz+len/2,
-                cx-len/2, cy-len/2, cz+len/2,
-                cx-len/2, cy-len/2, cz-len/2,
-                cx+len/2, cy-len/2, cz+len/2,
-                cx+len/2, cy-len/2, cz-len/2,
-                cx-len/2, cy-len/2, cz-len/2,
+                cx + len / 2, cy - len / 2, cz + len / 2,
+                cx - len / 2, cy - len / 2, cz + len / 2,
+                cx - len / 2, cy - len / 2, cz - len / 2,
+                cx + len / 2, cy - len / 2, cz + len / 2,
+                cx + len / 2, cy - len / 2, cz - len / 2,
+                cx - len / 2, cy - len / 2, cz - len / 2,
         };
 
-        coords = c;
-
-        float tempNormals[] = {
+        normals = new float[]{
                 1.0f,0.0f,0.0f,   1.0f,0.0f,0.0f,   1.0f,0.0f,0.0f,   1.0f,0.0f,0.0f,   1.0f,0.0f,0.0f,   1.0f,0.0f,0.0f,
                 0.0f,0.0f,1.0f,   0.0f,0.0f,1.0f,   0.0f,0.0f,1.0f,   0.0f,0.0f,1.0f,   0.0f,0.0f,1.0f,   0.0f,0.0f,1.0f,
                 0.0f,1.0f,0.0f,   0.0f,1.0f,0.0f,   0.0f,1.0f,0.0f,   0.0f,1.0f,0.0f,   0.0f,1.0f,0.0f,   0.0f,1.0f,0.0f,
@@ -75,12 +73,11 @@ public class Cube {
                 0.0f,-1.0f,0.0f,  0.0f,-1.0f,0.0f,  0.0f,-1.0f,0.0f,  0.0f,-1.0f,0.0f,  0.0f,-1.0f,0.0f,  0.0f,-1.0f,0.0f
         };
 
-        normals = tempNormals;
 
         vertexBuffer = ByteBuffer.allocateDirect(coords.length*4).order(ByteOrder.nativeOrder()).asFloatBuffer();
         vertexBuffer.put(coords).position(0);
 
-        normalBuffer = ByteBuffer.allocateDirect(tempNormals.length*4).order(ByteOrder.nativeOrder()).asFloatBuffer();
+        normalBuffer = ByteBuffer.allocateDirect(normals.length*4).order(ByteOrder.nativeOrder()).asFloatBuffer();
         normalBuffer.put(normals).position(0);
 
         final int vertexShaderHandle = MyGLRenderer.loadShader(GLES20.GL_VERTEX_SHADER,vertexShader);
@@ -115,11 +112,9 @@ public class Cube {
         colorHandle = GLES20.glGetUniformLocation(mProgram, "a_Color");
         normalHandle = GLES20.glGetAttribLocation(mProgram, "a_Normal");
 
-        vertexBuffer.position(0);
         GLES20.glVertexAttribPointer(positionHandle,NUM_OF_COORDS,GLES20.GL_FLOAT,false,0,vertexBuffer);
         GLES20.glEnableVertexAttribArray(positionHandle);
 
-        normalBuffer.position(0);
         GLES20.glVertexAttribPointer(normalHandle,NUM_OF_COORDS, GLES20.GL_FLOAT,false,0,normalBuffer);
         GLES20.glEnableVertexAttribArray(normalHandle);
 
