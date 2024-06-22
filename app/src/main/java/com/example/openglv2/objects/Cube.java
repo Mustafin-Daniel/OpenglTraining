@@ -1,6 +1,8 @@
-package com.example.openglv2;
+package com.example.openglv2.objects;
 
 import android.opengl.GLES20;
+
+import com.example.openglv2.MyGLSurfaceView;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -80,8 +82,8 @@ public class Cube {
         normalBuffer = ByteBuffer.allocateDirect(normals.length*4).order(ByteOrder.nativeOrder()).asFloatBuffer();
         normalBuffer.put(normals).position(0);
 
-        final int vertexShaderHandle = MyGLRenderer.loadShader(GLES20.GL_VERTEX_SHADER,vertexShader);
-        final int fragmentShaderHandle = MyGLRenderer.loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShader);
+        final int vertexShaderHandle = MyGLSurfaceView.loadShader(GLES20.GL_VERTEX_SHADER,vertexShader);
+        final int fragmentShaderHandle = MyGLSurfaceView.loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShader);
 
         mProgram = GLES20.glCreateProgram();
 
@@ -152,6 +154,7 @@ public class Cube {
             + "   float diffuse = max(dot(modelViewNormal, lightVector), 0.1);       \n"
             // Attenuate the light based on distance.
             + "   diffuse = diffuse * (1.0 / (1.0 + (0.25 * distance * distance)));  \n"
+
             // Multiply the color by the illumination level. It will be interpolated across the triangle.
             + "   v_Color = a_Color * diffuse;                                       \n"
             // gl_Position is a special variable used to store the final position.
@@ -168,4 +171,5 @@ public class Cube {
                     + "{                              \n"
                     + "   gl_FragColor = v_Color;     \n"		// Pass the color directly through the pipeline.
                     + "}                              \n";
+
 }

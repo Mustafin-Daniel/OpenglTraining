@@ -1,4 +1,4 @@
-package com.example.openglv2;
+package com.example.openglv2.objects;
 
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
@@ -7,6 +7,8 @@ import static java.lang.Math.sin;
 
 import android.opengl.GLES20;
 
+import com.example.openglv2.MyGLSurfaceView;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -14,6 +16,7 @@ import java.util.ArrayList;
 
 public class Sphere {
     private float[] coords;
+    private float[] center = new float[3];
     private float[] normals;
 
     private int numCircles = 128; //Number of circles
@@ -28,6 +31,7 @@ public class Sphere {
     public Sphere(float x, float y, float z, float radius){
         ArrayList<Float> tempC = new ArrayList<>();
         ArrayList<Float> tempNormals = new ArrayList<>();
+        center = new float[]{x,y,z};
         for(int i=0;i<numVert;i++){
             float[] bottom = {
                     x, y, z-radius
@@ -137,8 +141,8 @@ public class Sphere {
         normalBuffer = ByteBuffer.allocateDirect(normals.length*4).order(ByteOrder.nativeOrder()).asFloatBuffer();
         normalBuffer.put(normals).position(0);
 
-        final int vertexShaderHandle = MyGLRenderer.loadShader(GLES20.GL_VERTEX_SHADER,vertexShader);
-        final int fragmentShaderHandle = MyGLRenderer.loadShader(GLES20.GL_FRAGMENT_SHADER,fragmentShader);
+        final int vertexShaderHandle = MyGLSurfaceView.loadShader(GLES20.GL_VERTEX_SHADER,vertexShader);
+        final int fragmentShaderHandle = MyGLSurfaceView.loadShader(GLES20.GL_FRAGMENT_SHADER,fragmentShader);
 
         mProgram = GLES20.glCreateProgram();
 
@@ -160,7 +164,7 @@ public class Sphere {
     private int positionHandle;
     private int normalHandle;
 
-    public void draw(float[] mvMatrix, float[] mvpMatrix, float[] lightPosInEyeSpace){
+    public void draw(float[] mvMatrix, float[] mvpMatrix, float[] lightPosInEyeSpace, float[] color){
         GLES20.glUseProgram(mProgram);
 
         MVPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "u_MVPMatrix");
@@ -181,13 +185,45 @@ public class Sphere {
         GLES20.glUniformMatrix4fv(MVMatrixHandle,1,false,mvMatrix,0);
         GLES20.glUniformMatrix4fv(MVPMatrixHandle,1,false,mvpMatrix,0);
         GLES20.glUniform3f(lightPosHandle, lightPosInEyeSpace[0], lightPosInEyeSpace[1], lightPosInEyeSpace[2]);
-        float color[] = {1.0f,0.1f,0.1f,1.0f};
         GLES20.glUniform4f(colorHandle,color[0],color[1],color[2],color[3]);
         GLES20.glDrawArrays(GLES20.GL_TRIANGLES,0,coords.length/NUM_OF_COORDS);
     }
 
+
+
+    private float[] calculateNormal(float[] a, float[] b, float[] dot, float[] center) {
+        float normalX, normalY, normalZ;
+        normalX = (b[2] * a[1] - a[2] * b[1]) / (a[0] * b[1] - b[0] * a[1]);
+        normalY = (b[2] * a[0] - a[2] * b[0]) / (a[1] * b[0] - b[1] * a[0]);
+        normalZ = 1.0f;
+        float[] normalVector = {normalX, normalY, normalZ};
+        float magnitude = (float) Math.sqrt(normalVector[0] * normalVector[0] + normalVector[1] * normalVector[1] + normalVector[2] * normalVector[2]);
+
+        // Check for division by zero to prevent NaN values
+        if (magnitude != 0) {
+            // Normalize the vector by dividing each component by its magnitude
+            normalVector[0] /= magnitude;
+            normalVector[1] /= magnitude;
+            normalVector[2] /= magnitude;
+        }
+        if (dot[0]>center[0]) normalVector[0]=abs(normalVector[0]); else normalVector[0]=-abs(normalVector[0]);
+        if (dot[1]>center[1]) normalVector[1]=abs(normalVector[1]); else normalVector[1]=-abs(normalVector[1]);
+        if (dot[2]>center[2]) normalVector[2]=abs(normalVector[2]); else normalVector[2]=-abs(normalVector[2]);
+        return normalVector;
+    }
+
+    public float[] getCenter() {
+        return center;
+    }
+
+    /**@param start of the rope
+     * */
+    //private float getNextPendulumMovement(float[] start){
+    //    return start-center
+    //}
+
     private final String vertexShader =
-                    "uniform mat4 u_MVPMatrix;      \n"		// A constant representing the combined model/view/projection matrix.
+            "uniform mat4 u_MVPMatrix;      \n"		// A constant representing the combined model/view/projection matrix.
                     + "uniform mat4 u_MVMatrix;       \n"		// A constant representing the combined model/view matrix.
                     + "uniform vec3 u_LightPos;       \n"	    // The position of the light in eye space.
 
@@ -213,7 +249,7 @@ public class Sphere {
                     // Attenuate the light based on distance.
                     + "   diffuse = diffuse * (1.0 / (1.0 + (0.25 * distance * distance)));  \n"
                     // Multiply the color by the illumination level. It will be interpolated across the triangle.
-                    + "   v_Color = a_Color * diffuse*5.0;                                       \n"
+                    + "   v_Color = a_Color * diffuse * 3.0;                                       \n"
                     // gl_Position is a special variable used to store the final position.
                     // Multiply the vertex by the matrix to get the final point in normalized screen coordinates.
                     + "   gl_Position = u_MVPMatrix * a_Position;                            \n"
@@ -228,27 +264,6 @@ public class Sphere {
                     + "{                              \n"
                     + "   gl_FragColor = v_Color;     \n"		// Pass the color directly through the pipeline.
                     + "}                              \n";
-
-    private float[] calculateNormal(float[] a, float[] b, float[] dot, float[] center) {
-        float normalX, normalY, normalZ;
-        normalX = (b[2] * a[1] - a[2] * b[1]) / (a[0] * b[1] - b[0] * a[1]);
-        normalY = (b[2] * a[0] - a[2] * b[0]) / (a[1] * b[0] - b[1] * a[0]);
-        normalZ = 1.0f;
-        float[] normalVector = {normalX, normalY, normalZ};
-        float magnitude = (float) Math.sqrt(normalVector[0] * normalVector[0] + normalVector[1] * normalVector[1] + normalVector[2] * normalVector[2]);
-
-        // Check for division by zero to prevent NaN values
-        if (magnitude != 0) {
-            // Normalize the vector by dividing each component by its magnitude
-            normalVector[0] /= magnitude;
-            normalVector[1] /= magnitude;
-            normalVector[2] /= magnitude;
-        }
-        if (dot[0]>center[0]) normalVector[0]=abs(normalVector[0]); else normalVector[0]=-abs(normalVector[0]);
-        if (dot[1]>center[1]) normalVector[1]=abs(normalVector[1]); else normalVector[1]=-abs(normalVector[1]);
-        if (dot[2]>center[2]) normalVector[2]=abs(normalVector[2]); else normalVector[2]=-abs(normalVector[2]);
-        return normalVector;
-    }
 }
 
 

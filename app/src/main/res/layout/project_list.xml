@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center">
+    <Button
+        android:id="@+id/spinningcubebtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1. Spinning Cube With Diffuse lighting"/>
+
+    <Button
+        android:id="@+id/solarsystembtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2. Solar System"
+        />
+
+    <Button
+        android:id="@+id/pendulumbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="3. Pendulum"/>
+
+    <Button
+        android:id="@+id/pendulumwavebtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="4. Pendulum Wave"/>
+</LinearLayout>

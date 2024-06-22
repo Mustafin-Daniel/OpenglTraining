@@ -1,14 +1,16 @@
-package com.example.openglv2;
+package com.example.openglv2.glrenderers;
 
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.os.SystemClock;
 
+import com.example.openglv2.objects.Cube;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-public class MyGLRenderer implements GLSurfaceView.Renderer {
+public class SpinningCubeRenderer implements GLSurfaceView.Renderer {
     private float[] viewMatrix = new float[16];
     private float[] projectionMatrix = new float[16];
     private float[] lightModelMatrix = new float[16]; // Position of the light
@@ -18,13 +20,12 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     private float[] modelMatrix = new float[16];
     private float[] MVPMatrix = new float[16];
     private float[] MVMatrix = new float[16];
-    private float[] lightPos = {-0.75f,0.f,1.0f};
-    private float[] eyePos = {-3.5f,0.0f,0.0f};
+    private float[] lightPos = {3.0f,0.0f,1.0f};
+    private float[] eyePos = {3.0f,0.0f,1.0f};
 
-
-    Cube cube; Sphere sphere;
+    private Cube cube;
     @Override
-    public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+    public void onSurfaceCreated(GL10 gl10, EGLConfig eglConfig) {
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         //GLES20.glEnable(GLES20.GL_CULL_FACE);
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
@@ -38,12 +39,11 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         final float upZ = 1.0f;
 
         Matrix.setLookAtM(viewMatrix, 0, eyePos[0], eyePos[1], eyePos[2], lookX, lookY, lookZ, upX, upY, upZ);
-        cube = new Cube(0.0f,0.0f,0.0f,0.5f);
-        sphere = new Sphere(0.0f,0.0f,0.0f,0.5f);
+        cube = new Cube(0.0f,0.0f,0.0f,1.0f);
     }
 
     @Override
-    public void onSurfaceChanged(GL10 gl, int width, int height) {
+    public void onSurfaceChanged(GL10 gl10, int width, int height) {
         // Set the OpenGL viewport to the same size as the surface.
         GLES20.glViewport(0, 0, width, height);
 
@@ -61,7 +61,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     }
 
     @Override
-    public void onDrawFrame(GL10 gl) {
+    public void onDrawFrame(GL10 gl10) {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
         // Do a complete rotation every 10 seconds.
@@ -78,36 +78,13 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
         Matrix.setIdentityM(modelMatrix,0);
         Matrix.translateM(modelMatrix, 0,0.0f,0.0f,0.0f);
-        Matrix.rotateM(modelMatrix,0,angleInDegrees,1.0f,1.0f,1.0f);
+        Matrix.rotateM(modelMatrix,0,angleInDegrees,1.0f,1.0f,-1.0f);
 
         Matrix.multiplyMM(MVPMatrix, 0, viewMatrix, 0, modelMatrix, 0);
         MVMatrix=MVPMatrix;
         Matrix.multiplyMM(MVPMatrix,0,projectionMatrix,0,MVPMatrix,0);
-        //cube.draw(MVMatrix,MVPMatrix,lightPosInEyeSpace);
-        sphere.draw(MVMatrix,MVPMatrix,lightPosInEyeSpace);
+        cube.draw(MVMatrix,MVPMatrix,lightPosInEyeSpace);
     }
 
-    public static int loadShader(int type, String shaderCode){
 
-        // create a vertex shader type (GLES20.GL_VERTEX_SHADER)
-        // or a fragment shader type (GLES20.GL_FRAGMENT_SHADER)
-        int shader = GLES20.glCreateShader(type);
-
-        // add the source code to the shader and compile it
-        GLES20.glShaderSource(shader, shaderCode);
-        GLES20.glCompileShader(shader);
-
-        final int[] compileStatus = new int[1];
-        GLES20.glGetShaderiv(shader, GLES20.GL_COMPILE_STATUS, compileStatus, 0);
-
-        // If the compilation failed, delete the shader.
-        if (compileStatus[0] == 0)
-        {
-            GLES20.glDeleteShader(shader);
-            shader = 0;
-            throw new RuntimeException("Error creating shader.");
-        }
-
-        return shader;
-    }
 }
